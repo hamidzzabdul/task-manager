@@ -36,7 +36,7 @@ const dummyTasks = [
 
 const RecentTasks = () => {
   return (
-    <div className="w-full p-3 rounded-md bg-white h-[200px]">
+    <div className="w-full p-3 rounded-md bg-white h-full">
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-semibold capitalize">Recent Tasks</h2>
         <span className="text-xs font-semibold py-1 px-3 flex items-center gap-1 border rounded-md cursor-pointer group hover:bg-blue-500 hover:text-white transition-all duration-300">

@@ -74,11 +74,11 @@ exports.getOne = (Module) =>
 
 exports.getAll = (Module) =>
   catchAsync(async (req, res) => {
-    const jobs = await Module.find();
+    const docs = await Module.find();
     res.status(200).json({
-      result: jobs.length,
+      result: docs.length,
       data: {
-        jobs,
+        docs,
       },
     });
   });

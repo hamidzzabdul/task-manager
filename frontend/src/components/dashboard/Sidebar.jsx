@@ -74,11 +74,7 @@ const Sidebar = () => {
 
         <ul className="w-full flex flex-col mt-4 gap-2">
           {menuitems.map((item) => (
-            <NavLink
-              to={item.href}
-              key={item.name}
-              activeClassName="bg-blue-500 text-white" // Style when active
-            >
+            <NavLink to={item.href} key={item.name}>
               <li className="p-2 flex items-center gap-4  group hover:bg-blue-500 transition duration-300 rounded-md ">
                 {item.icon}
                 <p className="text-sm font-semibold group-hover:text-white">
