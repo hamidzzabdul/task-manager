@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
+import Cookies from "js-cookie";
 
 const AuthContext = createContext();
 
@@ -8,12 +9,29 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
-    if (storedToken) setToken(storedToken);
+    const storedUser = localStorage.getItem("user");
+    if (storedToken) {
+      setToken(storedToken);
+    }
+    if (storedUser) {
+      try {
+        setUser(JSON.parse(storedUser));
+      } catch (err) {
+        console.error("Error parsing user from localStorage", err);
+      }
+    }
   }, []);
 
-  const login = (token) => {
+  const login = (token, user) => {
+    console.log(user);
+    if (!token || !user) {
+      console.error("Login failed: token or user is missing");
+      return;
+    }
     setToken(token);
-    localStorage.getItem("token", token);
+    setUser(user);
+    localStorage.setItem("token", token);
+    localStorage.setItem("user", JSON.stringify(user));
   };
   return (
     <AuthContext.Provider value={{ user, token, login }}>

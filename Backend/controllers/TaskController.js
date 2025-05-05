@@ -16,7 +16,7 @@ exports.CreateTask = catchAsync(async (req, res, next) => {
     dueDate: req.body.dueDate,
     todos: req.body.todos,
     members: req.body.members,
-    user: req.user._id,
+    userId: req.user._id,
   });
   res.status(200).json({
     data: { task },

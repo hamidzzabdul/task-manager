@@ -1,8 +1,9 @@
 import { useMutation } from "@tanstack/react-query";
 import { api } from "../lib/api";
+import Cookies from "js-cookie";
 
 export const loginUser = async (credentials) => {
-  const response = await api.post("/login", credentials);
+  const response = await api.post("/users/login", credentials);
   return response.data;
 };
 
@@ -10,7 +11,8 @@ export const UseLogin = () => {
   return useMutation({
     mutationFn: loginUser,
     onSuccess: (data) => {
-      localStorage.setItem("token", data.token);
+      const user = data.data.user;
+      localStorage.setItem("user", JSON.stringify(user));
     },
     onError: (error) => {
       console.error("Login failed", error);

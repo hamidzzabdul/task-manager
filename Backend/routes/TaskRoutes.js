@@ -3,12 +3,11 @@ const TaskController = require("../controllers/TaskController");
 const authController = require("../controllers/authcontroller");
 const Router = express.Router();
 
-Router.route("/")
-  .get(TaskController.getAllTasks)
-  .post(
-    authController.protect,
-    authController.restrictTo("admin"),
-    TaskController.CreateTask
-  );
+Router.route("/").get(TaskController.getAllTasks);
+Router.route("/create").post(
+  authController.protect,
+  // authController.restrictTo("admin"),
+  TaskController.CreateTask
+);
 
 module.exports = Router;

@@ -5,6 +5,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Users } from "lucide-react";
 import { useState } from "react";
 import TaskInputList from "../dashboard/components/TaskInputList";
+import { UseUser } from "../../hooks/user/useUser";
+import { useCreateTask } from "../../hooks/user/useTaks";
+import { useQueryClient } from "@tanstack/react-query";
+
+import toast from "react-hot-toast";
+import { useAuth } from "../../lib/context/authContext";
 
 const taskSchema = z.object({
   title: z.string().min(1, "Task title is required"),
@@ -36,17 +42,67 @@ const Modal = ({ isOpen, onClose, children }) => {
 };
 
 const CreateTasksForm = () => {
+  const { user: currentUser } = useAuth();
+  const { data: users, isLoading, error } = UseUser();
   const [isModalOpen, setIsModalOpen] = useState(false);
-
-  // tasks
   const [tasks, setTasks] = useState([]); // << Added
+  const [selectedUsers, setSelectedUsers] = useState([]);
+
+  const queryClient = useQueryClient();
+  const { mutateAsync: createTask } = useCreateTask();
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm({ resolver: zodResolver(taskSchema) });
+  // tasks
+  const handleUserToggle = (userId) => {
+    setSelectedUsers((prev) =>
+      prev.includes(userId)
+        ? prev.filter((id) => id !== userId)
+        : [...prev, userId]
+    );
+  };
+
+  const userId = currentUser._id;
+  const onSubmit = async (data) => {
+    const fullData = {
+      ...data,
+      todos: tasks,
+      members: selectedUsers,
+      userId,
+    };
+    console.log("Full data", fullData);
+
+    try {
+      const result = await createTask(fullData);
+
+      toast.success("Task created successfully!");
+      console.log("Task created successfully", result);
+
+      await queryClient.invalidateQueries(["tasks"]);
+
+      reset();
+      setTasks([]);
+      setSelectedUsers([]);
+    } catch (error) {
+      toast.error("Task creation failed. Please try again.");
+      console.error("Task creation failed", error);
+    }
+  };
 
   return (
-    <form className="mt-4 flex flex-col gap-4 w-full ">
+    <form
+      className="mt-4 flex flex-col gap-4 w-full "
+      onSubmit={handleSubmit(onSubmit)}
+    >
       <label htmlFor="title" className="flex flex-col gap-2 mt-2">
         <span className="text-sm text-gray-500 font-semibold">Task Title </span>
         <input
           type="text"
+          {...register("title")}
           className="w-full border-gray-300 border text-sm p-2 rounded-md outline-none"
         />
       </label>
@@ -54,14 +110,20 @@ const CreateTasksForm = () => {
         <span className="text-sm text-gray-500 font-semibold">Description</span>
         <textarea
           type="text"
+          {...register("description")}
           className="w-full text-sm p-2border-gray-300 border h-[100px] p-2 rounded-md outline-none"
         />
       </label>
       <div className="grid grid-cols-3 gap-4">
         <label htmlFor="priority" className="flex flex-col gap-2 mt-2">
           <span className="text-sm text-gray-500 font-semibold">Priority</span>
-          <select className="w-full text-sm p-2 border-gray-300 border rounded-md outline-none">
-            <option value="low">Low</option>
+          <select
+            className="w-full text-sm p-2 border-gray-300 border rounded-md outline-none"
+            {...register("priority")}
+          >
+            <option value="low" selected>
+              Low
+            </option>
             <option value="medium">Medium</option>
             <option value="high">High</option>
           </select>
@@ -72,6 +134,7 @@ const CreateTasksForm = () => {
           <input
             type="date"
             className="w-full text-sm p-2 border-gray-300 border rounded-md outline-none"
+            {...register("dueDate")}
           />
         </label>
 
@@ -92,51 +155,28 @@ const CreateTasksForm = () => {
         </label>
         <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
           <ul className="flex flex-col gap-3 mt-3">
-            <li className="border-b border-gray-300 flex items-center justify-between py-3 px-6">
-              <div className="flex gap-2">
-                <div className="w-[50px] h-[50px] rounded-full bg-gray-300 "></div>
-                <div className="flex flex-col">
-                  <p className="text-base font-semibold">James Deen</p>
-                  <span className="text-sm font-semibold text-gray-500">
-                    jamesdeen@gmail.com
-                  </span>
+            {users?.data.docs.map((user) => (
+              <li
+                className="border-b border-gray-300 flex items-center justify-between py-3 px-6"
+                key={user._id}
+              >
+                <div className="flex gap-2">
+                  <div className="w-[50px] h-[50px] rounded-full bg-gray-300 "></div>
+                  <div className="flex flex-col">
+                    <p className="text-base font-semibold">{user.name}</p>
+                    <span className="text-sm font-semibold text-gray-500">
+                      {user.email}
+                    </span>
+                  </div>
                 </div>
-              </div>
-              <input
-                type="checkbox"
-                className="rounded-lg border border-gray-300 w-[20px] h-[20px] cursor-pointer "
-              />
-            </li>
-            <li className="border-b border-gray-300 flex items-center justify-between py-3 px-6">
-              <div className="flex gap-2">
-                <div className="w-[50px] h-[50px] rounded-full bg-gray-300 "></div>
-                <div className="flex flex-col">
-                  <p className="text-base font-semibold">James Deen</p>
-                  <span className="text-sm font-semibold text-gray-500">
-                    jamesdeen@gmail.com
-                  </span>
-                </div>
-              </div>
-              <input
-                type="checkbox"
-                className="rounded-lg border border-gray-300 w-[20px] h-[20px] cursor-pointer "
-              />
-            </li>
-            <li className="border-b border-gray-300 flex items-center justify-between py-3 px-6">
-              <div className="flex gap-2">
-                <div className="w-[50px] h-[50px] rounded-full bg-gray-300 "></div>
-                <div className="flex flex-col">
-                  <p className="text-base font-semibold">James Deen</p>
-                  <span className="text-sm font-semibold text-gray-500">
-                    jamesdeen@gmail.com
-                  </span>
-                </div>
-              </div>
-              <input
-                type="checkbox"
-                className="rounded-lg border border-gray-300 w-[20px] h-[20px] cursor-pointer "
-              />
-            </li>
+                <input
+                  type="checkbox"
+                  checked={selectedUsers.includes(user._id)}
+                  onChange={() => handleUserToggle(user._id)}
+                  className="rounded-lg border border-gray-300 w-[20px] h-[20px] cursor-pointer "
+                />
+              </li>
+            ))}
           </ul>
           <div className="w-full flex items-center justify-end gap-3 p-3">
             <button

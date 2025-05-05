@@ -15,7 +15,7 @@ const menuitems = [
     ),
   },
   {
-    href: "/dashboard/managetasks",
+    href: "/dashboard/manage-tasks",
     name: "Manage Tasks",
     icon: (
       <ClipboardList

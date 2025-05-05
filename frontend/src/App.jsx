@@ -7,6 +7,9 @@ import SignUp from "./components/auth/signUp";
 import DashboardLayout from "./pages/DashboardLayout";
 import DashBoard from "./components/dashboard/dashboard";
 import CreateTasks from "./components/dashboard/CreateTasks";
+import ManageTasks from "./components/dashboard/components/ManageTasks";
+import TeamMembers from "./components/dashboard/components/TeamMembers";
+import MyTasks from "./components/dashboard/components/MyTasks";
 
 function App() {
   return (
@@ -22,6 +25,9 @@ function App() {
         <Route path="/dashboard" element={<DashboardLayout />}>
           <Route index element={<DashBoard />} />
           <Route path="create-tasks" element={<CreateTasks />} />
+          <Route path="manage-tasks" element={<ManageTasks />} />
+          <Route path="team-members" element={<TeamMembers />} />
+          <Route path="my-tasks" element={<MyTasks />} />
         </Route>
       </Routes>
     </>
