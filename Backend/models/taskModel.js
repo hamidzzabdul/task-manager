@@ -17,6 +17,11 @@ const taskSchema = new mongoose.Schema(
       enum: ["low", "medium", "high"],
       default: "low",
     },
+    status: {
+      type: String,
+      enum: ["pending", "completed", "in-progress"],
+      default: "pending",
+    },
     dueDate: {
       type: Date,
       required: [true, "A task must have a due date"],
@@ -29,6 +34,7 @@ const taskSchema = new mongoose.Schema(
     todos: {
       type: [String],
       required: [true, "A task must have todos"],
+      completed: { type: Boolean, default: false },
     },
     userId: {
       type: mongoose.Schema.Types.ObjectId,

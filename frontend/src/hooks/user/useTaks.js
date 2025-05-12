@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "../../lib/api";
 
 const createTask = async (taskData) => {
@@ -18,5 +18,17 @@ export const useCreateTask = () => {
       console.error("Task creation failed", error);
       throw error;
     },
+  });
+};
+
+const getAllTasks = async () => {
+  const response = await api.get("/tasks");
+  return response.data.data.docs;
+};
+
+export const useGetTasks = () => {
+  return useQuery({
+    queryKey: ["tasks"],
+    queryFn: getAllTasks,
   });
 };

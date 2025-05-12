@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { api } from "../../lib/api";
 
-export const fetchuser = async () => {
+export const fetchusers = async () => {
   const response = await api.get("/users");
   return response.data;
 };
@@ -12,13 +12,14 @@ export const getCurrentUser = async () => {
 export const UseUser = () => {
   return useQuery({
     queryKey: ["user"],
-    queryFn: fetchuser,
+    queryFn: fetchusers,
     onError: (error) => {
       console.error("User fetch failed", error);
       throw error;
     },
   });
 };
+
 export const UseCurrentUser = () => {
   return useQuery({
     queryKey: ["user"],

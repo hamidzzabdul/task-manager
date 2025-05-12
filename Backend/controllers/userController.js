@@ -8,6 +8,8 @@ exports.getUser = factory.getOne(User);
 exports.updateUser = factory.updateOne(User);
 exports.deleteAllUser = factory.deleteAll(User);
 exports.createUser = catchAsync(async (req, res, next) => {
+  console.log("Received role:", req.body.role);
+  console.log("hello world");
   const doc = await User.create({
     name: req.body.name,
     email: req.body.email,
@@ -15,6 +17,8 @@ exports.createUser = catchAsync(async (req, res, next) => {
     passwordConfirm: req.body.passwordConfirm,
     role: req.body.role,
   });
+  console.log("Received role:", req.body.role);
+
   this.password = undefined;
   if (!doc) {
     return next("Please provide fill in all the options", 404);
